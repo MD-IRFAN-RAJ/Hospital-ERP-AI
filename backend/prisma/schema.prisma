@@ -1,0 +1,398 @@
+// MediCore AI-Powered Hospital ERP Prisma Schema
+// Supported on SQLite for zero-config local demo and PostgreSQL for enterprise deploy.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id           String    @id @default(uuid())
+  name         String
+  email        String    @unique
+  passwordHash String
+  role         String    // SUPER_ADMIN, HOSPITAL_ADMIN, DOCTOR, RECEPTIONIST, NURSE, PHARMACIST, LAB_TECHNICIAN, ACCOUNTANT, PATIENT
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+
+  patient      Patient?
+  doctor       Doctor?
+  auditLogs    AuditLog[]
+  conversations AIConversation[]
+  documents    Document[]
+}
+
+model Patient {
+  id               String          @id @default(uuid())
+  userId           String?         @unique
+  patientNumber    String          @unique // e.g. MC-2026-0001
+  title            String?         @default("Mr.")
+  firstName        String
+  middleName       String?
+  lastName         String
+  dateOfBirth      DateTime?
+  gender           String?         // Male, Female, Other
+  phone            String?
+  email            String?
+  address          String?
+  city             String?
+  state            String?
+  country          String?         @default("Nepal")
+  wardNo           String?
+  ethnicity        String?
+  bloodGroup       String?
+  allergies        String?
+  chronicDiseases  String?
+  emergencyContact String?
+  isPoliceCase     Boolean         @default(false)
+  patientType      String?         @default("General") // General, Emergency, VIP
+  createdAt        DateTime        @default(now())
+
+  user             User?           @relation(fields: [userId], references: [id])
+  appointments     Appointment[]
+  records          MedicalRecord[]
+  vitals           Vital[]
+  prescriptions    Prescription[]
+  labOrders        LabOrder[]
+  admissions       Admission[]
+  bills            Bill[]
+  documents        Document[]
+  aiSummaries      AISummary[]
+}
+
+model Department {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  doctors     Doctor[]
+}
+
+model Doctor {
+  id             String         @id @default(uuid())
+  userId         String         @unique
+  departmentId   String
+  specialization String
+  licenseNumber  String         @unique
+  consultationFee Float         @default(500)
+  roomNumber     String?
+
+  user           User           @relation(fields: [userId], references: [id])
+  department     Department     @relation(fields: [departmentId], references: [id])
+  appointments   Appointment[]
+  medicalRecords MedicalRecord[]
+  prescriptions  Prescription[]
+  labOrders      LabOrder[]
+}
+
+model Appointment {
+  id              String   @id @default(uuid())
+  patientId       String
+  doctorId        String
+  startAt         DateTime
+  endAt           DateTime
+  status          String   @default("WAITING") // PENDING, CONFIRMED, WAITING, IN_ROOM, COMPLETED, CANCELLED
+  appointmentType String   @default("OPD")     // OPD, IPD, EMERGENCY
+  caseNo          String?  // e.g. O/202604/1
+  reason          String?
+  createdAt       DateTime @default(now())
+
+  patient         Patient  @relation(fields: [patientId], references: [id])
+  doctor          Doctor   @relation(fields: [doctorId], references: [id])
+
+  @@index([doctorId, startAt])
+  @@index([patientId, startAt])
+}
+
+model MedicalRecord {
+  id            String         @id @default(uuid())
+  patientId     String
+  doctorId      String
+  symptoms      String?
+  diagnosis     String?
+  clinicalNotes String?
+  icdCode       String?
+  createdAt     DateTime       @default(now())
+
+  patient       Patient        @relation(fields: [patientId], references: [id])
+  doctor        Doctor         @relation(fields: [doctorId], references: [id])
+  vitals        Vital[]
+  prescriptions Prescription[]
+
+  @@index([patientId, createdAt])
+}
+
+model Vital {
+  id              String         @id @default(uuid())
+  patientId       String
+  recordId        String?
+  bloodPressure   String?        // e.g. "120/80"
+  pulse           Int?           // e.g. 72
+  temperature     Float?         // e.g. 36.9
+  spo2            Int?           // e.g. 98
+  respiratoryRate Int?           // e.g. 16
+  height          Float?         // cm e.g. 175
+  weight          Float?         // kg e.g. 70
+  bmi             Float?         // e.g. 22.9
+  news2Score      Int?           @default(0)
+  painScore       Int?           @default(0)
+  recordedAt      DateTime       @default(now())
+
+  patient         Patient        @relation(fields: [patientId], references: [id])
+  record          MedicalRecord? @relation(fields: [recordId], references: [id])
+}
+
+model Prescription {
+  id         String             @id @default(uuid())
+  recordId   String?
+  patientId  String
+  doctorId   String
+  status     String             @default("PENDING") // PENDING, DISPENSED, CANCELLED
+  notes      String?
+  createdAt  DateTime           @default(now())
+
+  record     MedicalRecord?     @relation(fields: [recordId], references: [id])
+  patient    Patient            @relation(fields: [patientId], references: [id])
+  doctor     Doctor             @relation(fields: [doctorId], references: [id])
+  items      PrescriptionItem[]
+}
+
+model PrescriptionItem {
+  id             String       @id @default(uuid())
+  prescriptionId String
+  medicineId     String
+  dosage         String       // e.g. "500 mg"
+  frequency      String       // e.g. "1 capsule x 2 daily"
+  duration       String       // e.g. "5 days"
+  instructions   String?      // e.g. "After food"
+  isDispensed    Boolean      @default(false)
+
+  prescription   Prescription @relation(fields: [prescriptionId], references: [id], onDelete: Cascade)
+  medicine       Medicine     @relation(fields: [medicineId], references: [id])
+}
+
+model Medicine {
+  id                String             @id @default(uuid())
+  name              String             @unique
+  genericName       String?
+  category          String?            // Antibiotic, Analgesic, Antacid, etc.
+  manufacturer      String?
+  unitPrice         Float              @default(10.0)
+  reorderLevel      Int                @default(20)
+
+  batches           MedicineBatch[]
+  prescriptionItems PrescriptionItem[]
+}
+
+model MedicineBatch {
+  id           String                 @id @default(uuid())
+  medicineId   String
+  batchNumber  String
+  expiryDate   DateTime
+  quantity     Int                    @default(0)
+  costPrice    Float                  @default(5.0)
+
+  medicine     Medicine               @relation(fields: [medicineId], references: [id])
+  transactions InventoryTransaction[]
+
+  @@index([medicineId, expiryDate])
+}
+
+model InventoryTransaction {
+  id              String        @id @default(uuid())
+  batchId         String
+  quantityChange  Int           // positive for restock, negative for dispensing
+  transactionType String        // PURCHASE, DISPENSE, ADJUSTMENT, RETURN
+  referenceId     String?       // Prescription ID or PO ID
+  createdAt       DateTime      @default(now())
+
+  batch           MedicineBatch @relation(fields: [batchId], references: [id])
+}
+
+model LabOrder {
+  id         String      @id @default(uuid())
+  patientId  String
+  doctorId   String
+  priority   String      @default("ROUTINE") // ROUTINE, URGENT, STAT
+  status     String      @default("PENDING") // PENDING, SAMPLE_COLLECTED, PROCESSING, COMPLETED, CANCELLED
+  notes      String?
+  createdAt  DateTime    @default(now())
+
+  patient    Patient     @relation(fields: [patientId], references: [id])
+  doctor     Doctor      @relation(fields: [doctorId], references: [id])
+  results    LabResult[]
+
+  @@index([patientId, status])
+}
+
+model LabResult {
+  id             String    @id @default(uuid())
+  labOrderId     String
+  testName       String    // e.g. "Hemoglobin", "Blood Sugar", "Troponin"
+  category       String?   // Kemi, Hematologi, Mikrobiologi, Radiologi
+  value          String    // e.g. "120"
+  unit           String?   // e.g. "g/L", "mmol/L", "mg/dL"
+  referenceRange String?   // e.g. "115-150"
+  flag           String?   @default("NORMAL") // NORMAL, HIGH, LOW, CRITICAL
+  status         String    @default("APPROVED") // DRAFT, APPROVED
+  remarks        String?
+  recordedAt     DateTime  @default(now())
+
+  labOrder       LabOrder  @relation(fields: [labOrderId], references: [id], onDelete: Cascade)
+}
+
+model Ward {
+  id        String   @id @default(uuid())
+  name      String   @unique // e.g. "General Ward A", "ICU 1", "Pediatric Ward"
+  wardType  String   @default("GENERAL") // GENERAL, ICU, CCU, MATERNITY
+  floor     Int      @default(1)
+  beds      Bed[]
+}
+
+model Bed {
+  id         String      @id @default(uuid())
+  wardId     String
+  bedNumber  String      // e.g. "GW-101", "ICU-04"
+  status     String      @default("AVAILABLE") // AVAILABLE, OCCUPIED, MAINTENANCE
+  dailyRate  Float       @default(1000.0)
+
+  ward       Ward        @relation(fields: [wardId], references: [id])
+  admissions Admission[]
+}
+
+model Admission {
+  id           String    @id @default(uuid())
+  patientId    String
+  bedId        String
+  reason       String?
+  admittedAt   DateTime  @default(now())
+  dischargedAt DateTime?
+  status       String    @default("ACTIVE") // ACTIVE, DISCHARGED
+
+  patient      Patient   @relation(fields: [patientId], references: [id])
+  bed          Bed       @relation(fields: [bedId], references: [id])
+}
+
+model Bill {
+  id             String     @id @default(uuid())
+  patientId      String
+  billNumber     String     @unique // e.g. INV-2026-0001
+  totalAmount    Float      @default(0.0)
+  discountAmount Float      @default(0.0)
+  taxAmount      Float      @default(0.0)
+  netAmount      Float      @default(0.0)
+  paidAmount     Float      @default(0.0)
+  balanceAmount  Float      @default(0.0)
+  status         String     @default("UNPAID") // UNPAID, PARTIAL, PAID
+  createdAt      DateTime   @default(now())
+
+  patient        Patient    @relation(fields: [patientId], references: [id])
+  items          BillItem[]
+  payments       Payment[]
+
+  @@index([patientId, createdAt])
+}
+
+model BillItem {
+  id          String   @id @default(uuid())
+  billId      String
+  itemType    String   // CONSULTATION, MEDICINE, LAB_TEST, BED_CHARGE, PROCEDURE
+  description String
+  quantity    Int      @default(1)
+  unitPrice   Float    @default(0.0)
+  totalPrice  Float    @default(0.0)
+
+  bill        Bill     @relation(fields: [billId], references: [id], onDelete: Cascade)
+}
+
+model Payment {
+  id             String   @id @default(uuid())
+  billId         String
+  amount         Float
+  paymentMethod  String   @default("CASH") // CASH, CARD, UPI, INSURANCE
+  transactionRef String?
+  recordedAt     DateTime @default(now())
+
+  bill           Bill     @relation(fields: [billId], references: [id])
+}
+
+model Document {
+  id          String   @id @default(uuid())
+  patientId   String?
+  uploadedBy  String
+  fileName    String
+  fileUrl     String
+  mimeType    String
+  category    String   @default("LAB_REPORT") // LAB_REPORT, PRESCRIPTION, DISCHARGE_SUMMARY, POLICY
+  createdAt   DateTime @default(now())
+
+  patient     Patient? @relation(fields: [patientId], references: [id])
+  uploader    User     @relation(fields: [uploadedBy], references: [id])
+  extractions AIExtraction[]
+
+  @@index([patientId, createdAt])
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String?
+  action     String   // LOGIN, LOGOUT, CREATE_PATIENT, BOOK_APPOINTMENT, DISPENSE_MEDICINE, RECORD_PAYMENT, AI_QUERY
+  entityType String   // USER, PATIENT, APPOINTMENT, PRESCRIPTION, BILL, AI
+  entityId   String?
+  details    String?  // JSON stringified details
+  timestamp  DateTime @default(now())
+
+  user       User?    @relation(fields: [userId], references: [id])
+
+  @@index([userId, timestamp])
+}
+
+model AIConversation {
+  id           String      @id @default(uuid())
+  userId       String
+  title        String      @default("Hospital Assistant Chat")
+  contextScope String      @default("HOSPITAL_POLICIES") // HOSPITAL_POLICIES, PATIENT_RECORDS, GENERAL
+  createdAt    DateTime    @default(now())
+
+  user         User        @relation(fields: [userId], references: [id])
+  messages     AIMessage[]
+}
+
+model AIMessage {
+  id             String         @id @default(uuid())
+  conversationId String
+  role           String         // user, assistant, system
+  content        String
+  sourcesJson    String?        // JSON string of citation sources
+  createdAt      DateTime       @default(now())
+
+  conversation   AIConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+}
+
+model AIExtraction {
+  id                String    @id @default(uuid())
+  documentId        String?
+  originalText      String
+  extractedDataJson String    // JSON of extracted tests, values, units, flags
+  status            String    @default("DRAFT") // DRAFT, APPROVED, REJECTED
+  reviewedBy        String?
+  reviewedAt        DateTime?
+  createdAt         DateTime  @default(now())
+
+  document          Document? @relation(fields: [documentId], references: [id])
+}
+
+model AISummary {
+  id                  String   @id @default(uuid())
+  patientId           String
+  summaryText         String
+  sourceRecordIdsJson String?  // JSON list of record/vital/lab IDs used
+  createdAt           DateTime @default(now())
+
+  patient             Patient  @relation(fields: [patientId], references: [id])
+}
+

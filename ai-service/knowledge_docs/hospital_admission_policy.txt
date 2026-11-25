@@ -1,0 +1,28 @@
+MEDICORE HOSPITAL STANDARD OPERATING PROCEDURE: PATIENT ADMISSION POLICY
+Document ID: SOP-ADM-2026-01
+Effective Date: January 1, 2026
+Approved By: Medical Superintendent
+
+1. PURPOSE & SCOPE
+This document outlines standard admission protocols for Outpatient Department (OPD), Inpatient Department (IPD), and Emergency Department across all wards and intensive care units.
+
+2. ADMISSION CLASSIFICATIONS
+- Emergency Admission: Patients presenting with acute life-threatening conditions (e.g., severe respiratory distress, acute myocardial infarction, trauma, uncontrolled hemorrhage) shall be admitted directly without prior financial clearance.
+- Elective / Planned Admission: Requires prior consultation by a credentialed MediCore specialist, an active consultation order, and pre-admission financial deposit.
+- Day-Care Admission: Defined as scheduled surgical, endoscopic, or medical procedures requiring less than 24 hours of hospitalization.
+
+3. PATIENT REGISTRATION & BED ALLOCATION
+- Every inpatient must possess a verified MediCore Patient Number (format: MC-YYYY-XXXX).
+- Bed allocation is managed centrally by the Admissions Desk based on clinical acuity and specialty ward availability:
+  * General Ward: Multiple occupancy, routine post-operative and stable medical cases.
+  * Intensive Care Unit (ICU/CCU): 1:1 nurse-to-patient ratio, continuous hemodynamic monitoring required.
+  * Isolation Ward: Mandatory for suspected infectious droplet/airborne pathogens.
+
+4. FINANCIAL DEPOSIT PROTOCOL
+- General Ward: Advance deposit of 5,000 INR/NPR or corporate/insurance pre-authorization guarantee.
+- ICU/CCU: Advance deposit of 20,000 INR/NPR prior to elective transfer.
+- No emergency patient may be denied life-saving stabilization due to financial deposit delays.
+
+5. CLINICAL DOCUMENTATION REQUIREMENTS
+- The admitting physician must record: Primary Working Diagnosis, Baseline Vitals, Current Medications, Known Drug Allergies, and Immediate Treatment Plan within 2 hours of arrival.
+

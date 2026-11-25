@@ -1,0 +1,17 @@
+MEDICORE HOSPITAL PHARMACY STANDARD: DISPENSING AND INVENTORY MANAGEMENT
+Document ID: SOP-PHARM-2026-04
+Effective Date: January 1, 2026
+Approved By: Chief Pharmacist
+
+1. PRESCRIPTION VALIDATION
+- A licensed pharmacist must verify: patient identity, prescribing doctor's registration number, drug name, dosage form, strength, frequency, route, duration, and potential drug-drug interactions or allergies.
+
+2. ATOMIC INVENTORY DISPENSING
+- Medicines must be dispensed from batches adhering to First-Expiry-First-Out (FEFO).
+- The hospital ERP must execute an atomic inventory decrement simultaneously with the dispensing event.
+- If batch stock is less than requested quantity, the dispensing transaction must be halted with an Insufficient Stock warning.
+
+3. NEAR-EXPIRY AND REORDER ALERTS
+- Medicines expiring within 90 days must be highlighted in amber in the inventory dashboard.
+- Medicines at or below the minimum reorder threshold (default: 20 units) generate automated replenishment requisitions.
+

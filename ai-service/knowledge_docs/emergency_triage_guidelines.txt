@@ -1,0 +1,25 @@
+MEDICORE HOSPITAL CLINICAL GUIDELINE: EMERGENCY TRIAGE & ACUTE CARE
+Document ID: SOP-EMR-2026-03
+Effective Date: January 1, 2026
+Approved By: Head of Emergency Medicine
+
+1. EMERGENCY TRIAGE SCALE (ETS)
+All patients arriving at the Emergency Reception must be triaged within 5 minutes of arrival by a designated Triage Nurse:
+
+- LEVEL 1 (RED - RESUSCITATION):
+  Immediate threat to life. Requires immediate resuscitation without documentation delays.
+  Criteria: Cardiac arrest, severe respiratory failure (SpO2 < 85%), shock, GCS <= 8, severe anaphylaxis.
+  Action: Immediate transfer to Resuscitation Bay, alert On-Duty Emergency Consultant and Code Blue team.
+
+- LEVEL 2 (YELLOW - URGENT):
+  Potential threat to life, limb, or organ system. Assessment within 15 minutes.
+  Criteria: Severe chest pain, suspected stroke within thrombolysis window, severe asthma, fractures with neurovascular compromise, severe sepsis.
+
+- LEVEL 3 (GREEN - NON-URGENT):
+  Stable conditions requiring standard medical attention. Assessment within 60 minutes.
+  Criteria: Minor lacerations, uncomplicated fever, mild gastroenteritis, minor sprains.
+
+2. RECORDING OF CRITICAL OBSERVATIONS (NEWS2)
+- All acute adult patients must have a National Early Warning Score 2 (NEWS2) calculated from 6 parameters: Respiration Rate, Oxygen Saturations, Systolic BP, Pulse Rate, Consciousness Level (ACVPU), and Temperature.
+- Score >= 5 triggers an urgent clinical review by senior medical registrar.
+

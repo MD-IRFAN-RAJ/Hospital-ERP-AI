@@ -1,0 +1,22 @@
+MEDICORE HOSPITAL STANDARD OPERATING PROCEDURE: DISCHARGE & TRANSFER SOP
+Document ID: SOP-DIS-2026-02
+Effective Date: January 1, 2026
+Approved By: Chief Medical Officer
+
+1. DISCHARGE AUTHORIZATION
+- Only the attending consultant or designated primary physician may authorize patient discharge by signing the formal Clinical Discharge Order.
+
+2. DISCHARGE SUMMARY REQUIREMENTS
+Every discharged patient must receive an authorized, printed Discharge Summary containing:
+- Admission and discharge timestamps.
+- Primary and secondary diagnoses with ICD-10 codification.
+- Summary of hospital course, surgical procedures performed, and significant diagnostic test results.
+- Discharge Medication List: exact generic drug names, dosages, frequencies, and durations.
+- Clear dietary, lifestyle, and wound-care instructions.
+- Date, time, and department for mandatory outpatient follow-up.
+
+3. FINANCIAL & PHARMACY CLEARANCE
+- The Nursing Station notifies the Billing & Inpatient Department upon consultant authorization.
+- The Hospital Pharmacy conducts medication reconciliation, accepts unused unopened medications for credit, and dispenses take-home prescriptions.
+- The Finance Department reconciles interim payments, applies insurance approvals, and issues the Final Receipt and Gate Pass upon full settlement.
+
